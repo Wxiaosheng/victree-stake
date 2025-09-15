@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-/** @title VictreeStack
+/** @title VictreeStake
  *  @dev A contract for staking and managing user stakes
  */
-contract VictreeStack {
+contract VictreeStake {
   
   struct ETHStake {
     // 总质押量
@@ -49,6 +49,11 @@ contract VictreeStack {
     });
   }
 
+  // 查询总的质押金额
+  function getTotalStaked() public view returns (uint256) {
+    return ethStake.totalStaked;
+  }
+
   // 查询用户质押金额
   function getUserTotalStaked(address user) public view returns (uint256) {
     StakeData[] memory userStakes = stakes[user];
@@ -62,7 +67,8 @@ contract VictreeStack {
   // 质押ETH
   function stakeETH() external payable {
     require(msg.value > 0, unicode"质押金额不能小于0");
-    require(address(this).balance >= msg.value, unicode"合约余额不足");
+    // ! 合约这里不需要检查用户余额，因为如果余额不足，交易会直接失败
+    // require(address(msg.sender).balance >= msg.value, unicode"用户余额不足");
 
     // 记录质押信息
     stakes[msg.sender].push(StakeData({
