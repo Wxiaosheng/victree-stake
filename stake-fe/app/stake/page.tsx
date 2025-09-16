@@ -1,11 +1,14 @@
 'use client';
 
+import { useState } from "react";
 import { Button, Col, InputNumber, Row, Statistic } from "antd";
+import { parseEther } from "viem";
 
 export default function Stake() {
+  const [stakeAmount, setStakeAmount] = useState<number | undefined>(undefined);
 
   const handleStake = () => {
-    console.log("Stake clicked");
+    console.log("Stake clicked", parseEther(`${stakeAmount}`));
   }
   
   return (
@@ -20,9 +23,12 @@ export default function Stake() {
         <Row>
           <Col span="24" >Amount to Stake</Col>
           <Col span="24" style={{ marginBottom: 20, marginTop: 10 }}>
-            <InputNumber 
+            <InputNumber
+              min={0}
               addonAfter="ETH"
               style={{ width: "100%" }} 
+              value={stakeAmount}
+              onChange={(value) => setStakeAmount(value || 0)}
               placeholder="Please input amount to stake" 
             />
           </Col>
