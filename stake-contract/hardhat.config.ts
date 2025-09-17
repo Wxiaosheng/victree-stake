@@ -33,8 +33,10 @@ const config: HardhatUserConfig = {
     sepolia: {
       type: "http",
       chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      url: "https://ethereum-sepolia-rpc.publicnode.com",
+      // private key: 0x0f2462d6a79cac43ea6ab6a925bf21f7065c79e6760539639550cb576914f7e1
+      // address: 0xD1E6059628422DB5093f9862C1a007a71748Cb40
+      accounts: ["0x0f2462d6a79cac43ea6ab6a925bf21f7065c79e6760539639550cb576914f7e1"],
     },
   },
 };

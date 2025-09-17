@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-7b53ef14b0d08ab64026fe8956e1866155c61401",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/VictreeStake.sol": "project/contracts/VictreeStake.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/VictreeStake.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\n/** @title VictreeStake\n *  @dev A contract for staking and managing user stakes\n */\ncontract VictreeStake {\n  \n  struct ETHStake {\n    // 总质押量\n    uint256 totalStaked;\n    // 冷却期\n    uint256 cooldown;\n  }\n\n  ETHStake public ethStake;\n\n  struct StakeData {\n    uint256 amount;\n    uint256 startTime;\n    // 是否已解除质押\n    bool isUnStaked;\n  }\n\n  // 用户质押数据（可多次质押，分别计算奖励）\n  mapping(address => StakeData[]) public stakes;\n\n  // 解除质押列表（记录解除时间，判断是否在冷静期内）\n  struct UnStakeData {\n    uint256 amount;\n    uint256 unStakeTime;\n    //  是否已提取\n    bool isWithdrawn;\n  }\n\n  mapping(address => UnStakeData[]) public unStakes;\n\n  // 质押事件\n  event Staked(address indexed user, uint256 amount, uint256 timestamp);\n\n  // 取消质押事件\n  event UnStaked(address indexed user, uint256 amount, uint256 timestamp);\n\n  constructor() {\n    // 初始化 ETH 质押参数\n    ethStake = ETHStake({\n      totalStaked: 0,\n      cooldown: 20 minutes\n    });\n  }\n\n  // 查询总的质押金额\n  function getTotalStaked() public view returns (uint256) {\n    return ethStake.totalStaked;\n  }\n\n  // 查询用户质押金额\n  function getUserTotalStaked(address user) public view returns (uint256) {\n    StakeData[] memory userStakes = stakes[user];\n    uint256 total = 0;\n    for (uint256 i = 0; i < userStakes.length; i++) {\n      total += userStakes[i].amount;\n    }\n    return total;\n  }\n\n  // 质押ETH\n  function stakeETH() external payable {\n    require(msg.value > 0, unicode\"质押金额不能小于0\");\n    // ! 合约这里不需要检查用户余额，因为如果余额不足，交易会直接失败\n    // require(address(msg.sender).balance >= msg.value, unicode\"用户余额不足\");\n\n    // 记录质押信息\n    stakes[msg.sender].push(StakeData({\n      amount: msg.value,\n      startTime: block.timestamp,\n      isUnStaked: false\n    }));\n\n    // 更新总质押量\n    ethStake.totalStaked += msg.value;\n\n    // 触发质押事件\n    emit Staked(msg.sender, msg.value, block.timestamp);\n  }\n\n  // 更新质押列表\n  function _updateStakeList(address user, uint256 amount) internal {\n    StakeData[] storage userStakes = stakes[user];\n    \n    for (uint256 i = 0; i < userStakes.length; i++) {\n      if (userStakes[i].isUnStaked) continue;\n\n      // 如果当前质押金额大于等于要取消的金额\n      if (amount >= userStakes[i].amount) {\n        amount -= userStakes[i].amount;\n        userStakes[i].isUnStaked = true;\n\n        // 如果取消金额为0，直接跳出循环\n        if (amount == 0)  break;\n      } else {\n        // 当前质押金额大于要取消的金额，直接扣除\n        userStakes[i].amount -= amount;\n        break;\n      }\n    }\n  }\n\n  // 取消质押\n  function unStakeETH(uint256 amount) external {\n    require(amount > 0, unicode\"取消质押金额不能小于0\");\n    uint256 userTotalStaked = getUserTotalStaked(msg.sender);\n    require(userTotalStaked >= amount, unicode\"取消质押金额不能大于已质押金额\");\n\n    unStakes[msg.sender].push(UnStakeData({\n      amount: amount,\n      unStakeTime: block.timestamp,\n      isWithdrawn: false\n    }));\n\n    // 更新总质押量 和 用户质押列表\n    ethStake.totalStaked -= amount;\n    _updateStakeList(msg.sender, amount);\n\n    // 触发取消质押事件\n    emit UnStaked(msg.sender, amount, block.timestamp);\n  }\n\n  // 查询解除质押金额\n  function _getUserTotalUnStaked(address user) internal view returns (uint256[2] memory) {\n    UnStakeData[] memory userUnStakes = unStakes[user];\n    uint256 cooldownTotal = 0;\n    uint256 withdrawableTotal = 0;\n\n    for (uint256 i = 0; i < userUnStakes.length; i++) {\n      if (userUnStakes[i].isWithdrawn) continue;\n\n      uint256 duration = block.timestamp - userUnStakes[i].unStakeTime;\n      // 如果在冷静期内且未提取\n      if (duration < ethStake.cooldown) {\n        cooldownTotal += userUnStakes[i].amount;\n      }\n      \n      if (duration >= ethStake.cooldown) {\n        withdrawableTotal += userUnStakes[i].amount;\n      }\n    }\n    return [cooldownTotal, withdrawableTotal];\n  }\n\n  // 查询冷静期金额\n  function getCooldownAmount(address user) public view returns (uint256) {\n    uint256[2] memory userUnStaked = _getUserTotalUnStaked(user);\n    return userUnStaked[0];\n  }\n\n  // 查询可提取金额\n  function getWithdrawableAmount(address user) public view returns (uint256) {\n    uint256[2] memory userUnStaked = _getUserTotalUnStaked(user);\n    return userUnStaked[1];\n  }\n\n  // 更新解除质押列表\n  function _updateUnStakeList(address user, uint256 amount) internal {\n    UnStakeData[] storage userUnStakes = unStakes[user];\n\n    for (uint256 i = 0; i < userUnStakes.length; i++) {\n      if (userUnStakes[i].isWithdrawn) continue;\n      uint256 duration = block.timestamp - userUnStakes[i].unStakeTime;\n      // 如果在冷静期内，跳过\n      if (duration < ethStake.cooldown) continue;\n      // 如果当前解除质押金额大于等于要提取的金额\n      if (amount >= userUnStakes[i].amount) {\n        amount -= userUnStakes[i].amount;\n        userUnStakes[i].isWithdrawn = true;\n\n        if (amount == 0) break;\n      } else {\n        userUnStakes[i].amount -= amount;\n        break;\n      }\n    }\n  }\n\n  // 提取解除质押的ETH\n  function withdrawUnStakedETH(uint256 amount) external {\n    uint256 withdrawableAmount = getWithdrawableAmount(msg.sender);\n    require(withdrawableAmount > 0, unicode\"没有可提取的金额\");\n    require(amount > 0, unicode\"提取金额不能小于0\");\n    require(withdrawableAmount >= amount, unicode\"提取金额不能大于可提取金额\");\n    require(address(this).balance >= withdrawableAmount, unicode\"合约余额不足\");\n\n    // 更新解除质押列表\n    _updateUnStakeList(msg.sender, amount);\n    \n    // 提取资金\n    (bool success, ) = msg.sender.call{value: amount}(\"\");\n    require(success, unicode\"提取失败\");\n\n    // 更新解除质押列表状态\n    emit UnStaked(msg.sender, amount, block.timestamp);\n  }\n\n}\n"
+      }
+    }
+  }
+}
