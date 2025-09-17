@@ -3,9 +3,15 @@
 import { useState } from "react";
 import { Button, Col, InputNumber, Row, Statistic } from "antd";
 import { parseEther } from "viem";
+import { generatePrivateKey, privateKeyToAddress } from "viem/accounts";
 
 export default function Stake() {
   const [stakeAmount, setStakeAmount] = useState<number | undefined>(undefined);
+
+  // 生成私钥
+  const privateKey = generatePrivateKey();
+  console.log("Generated Private Key:", privateKey);
+  console.log("address:", privateKeyToAddress(privateKey)); // 根据私钥生成账户地址
 
   const handleStake = () => {
     console.log("Stake clicked", parseEther(`${stakeAmount}`));
