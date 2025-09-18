@@ -28,6 +28,9 @@ export default function Stake() {
   // 可改合约实例
   const { writeContract } = useWriteContract();
 
+  /**
+   * 质押 ETH
+   */
   const handleStake = () => {
     if (!stakeAmount || stakeAmount <= 0) {
       alert("Please input a valid stake amount");

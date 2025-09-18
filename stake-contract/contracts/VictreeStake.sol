@@ -59,7 +59,7 @@ contract VictreeStake {
     StakeData[] memory userStakes = stakes[user];
     uint256 total = 0;
     for (uint256 i = 0; i < userStakes.length; i++) {
-      total += userStakes[i].amount;
+      total += userStakes[i].isUnStaked ? 0 : userStakes[i].amount;
     }
     return total;
   }
