@@ -2,19 +2,51 @@
 
 import { useState } from "react";
 import { Button, Col, InputNumber, Row, Statistic } from "antd";
-import { parseEther } from "viem";
-import { generatePrivateKey, privateKeyToAddress } from "viem/accounts";
+import { formatEther, parseEther } from "viem";
+import { useAccount, useBalance, useReadContract, useWriteContract } from "wagmi";
+import abi from '../../abi/victreeStake.json';
 
 export default function Stake() {
   const [stakeAmount, setStakeAmount] = useState<number | undefined>(undefined);
 
-  // 生成私钥
-  const privateKey = generatePrivateKey();
-  console.log("Generated Private Key:", privateKey);
-  console.log("address:", privateKeyToAddress(privateKey)); // 根据私钥生成账户地址
+  // 当前用户
+  const { address } = useAccount();
+
+  // 当前用户余额
+  const balance = useBalance({ address });
+  const userBalance = balance.data?.value ? formatEther(balance.data.value) : 0;
+
+  // 当前用户质押金额
+  const userStaked = useReadContract({
+    abi, // 替换为你的合约 ABI
+    functionName: 'getUserTotalStaked',
+    args: [address],
+    address: '0xa9eC99e4e4566B029e8770d441AF2f2246581751', // 替换为你的合约地址
+  });
+  const userStakeAmount = userStaked.data ? formatEther(userStaked.data as bigint) : 0;
+
+  // 可改合约实例
+  const { writeContract } = useWriteContract();
 
   const handleStake = () => {
-    console.log("Stake clicked", parseEther(`${stakeAmount}`));
+    if (!stakeAmount || stakeAmount <= 0) {
+      alert("Please input a valid stake amount");
+      return;
+    }
+    if (parseFloat(userBalance as string) < stakeAmount) {
+      alert("Insufficient balance");
+      return;
+    }
+
+    // 调用合约的 stakeETH 方法进行质押
+    writeContract({
+      abi,
+      address: '0xa9eC99e4e4566B029e8770d441AF2f2246581751', // 替换为你的合约地址
+      functionName: 'stakeETH',
+      args: [],
+      value: parseEther(`${stakeAmount}`),
+    });
+
   }
   
   return (
@@ -22,8 +54,12 @@ export default function Stake() {
       <Col span="4"/>
       <Col span="16">
         <Row style={{ marginBottom: 60 }}>
-          <Col span="8"/>
-          <Statistic title="Stake Amount(ETH)" value={112893} precision={2} />
+          <Col span="12">
+            <Statistic title="Sepolia Amount(ETH)" value={userBalance} />
+          </Col>
+          <Col span="12">
+            <Statistic title="Stake Amount(ETH)" value={userStakeAmount} />
+          </Col>
         </Row>
         
         <Row>
