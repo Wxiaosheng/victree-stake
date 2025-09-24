@@ -3,6 +3,9 @@ import type { HardhatUserConfig } from "hardhat/config";
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
 import { configVariable } from "hardhat/config";
 
+import "hardhat-deploy";
+import "@openzeppelin/hardhat-upgrades";
+
 const config: HardhatUserConfig = {
   plugins: [hardhatToolboxViemPlugin],
   solidity: {
@@ -20,6 +23,9 @@ const config: HardhatUserConfig = {
         },
       },
     },
+  },
+  namedAccounts: {
+    deployer: 1
   },
   networks: {
     hardhatMainnet: {

@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+
 /** @title VictreeStake
  *  @dev A contract for staking and managing user stakes
  */
-contract VictreeStake {
+contract VictreeStake is Initializable, UUPSUpgradeable, OwnableUpgradeable {
   
   struct ETHStake {
     // 总质押量
@@ -41,13 +45,16 @@ contract VictreeStake {
   // 取消质押事件
   event UnStaked(address indexed user, uint256 amount, uint256 timestamp);
 
-  constructor() {
+  function initialize() public {
     // 初始化 ETH 质押参数
     ethStake = ETHStake({
       totalStaked: 0,
       cooldown: 20 minutes
     });
   }
+
+  // 空实现，只依赖 onlyOwner 修饰符
+  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   // 查询总的质押金额
   function getTotalStaked() public view returns (uint256) {

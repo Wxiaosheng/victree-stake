@@ -6,7 +6,7 @@
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
-    "deploy": "hardhat run scripts/deploy.ts"
+    "deploy": "hardhat deploy --network sepolia"
   },
   "keywords": [],
   "author": "",
@@ -18,8 +18,14 @@
     "@types/node": "^22.8.5",
     "forge-std": "github:foundry-rs/forge-std#v1.9.4",
     "hardhat": "^3.0.6",
+    "hardhat-deploy": "^1.0.4",
     "typescript": "~5.8.0",
     "viem": "^2.30.0"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0",
+    "@openzeppelin/contracts-upgradeable": "^5.4.0",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1"
+  }
 }
