@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Button, Col, InputNumber, Row, Statistic } from "antd";
 import { formatEther, parseEther } from "viem";
 import { useAccount, useReadContracts, useWatchContractEvent, useWriteContract } from "wagmi";
+import { STAKE_ADDRESS } from "../constant";
 import abi from '../../abi/victreeStake.json';
 
 export default function Withdraw() {
@@ -16,19 +17,19 @@ export default function Withdraw() {
     contracts: [
       { // 质押金额
         abi, // 替换为你的合约 ABI
-        address: '0xa9eC99e4e4566B029e8770d441AF2f2246581751',
+        address: STAKE_ADDRESS,
         functionName: 'getUserTotalStaked',
         args: [address],
       },
       { // 锁定金额
         abi,
-        address: '0xa9eC99e4e4566B029e8770d441AF2f2246581751',
+        address: STAKE_ADDRESS,
         functionName: 'getCooldownAmount',
         args: [address],
       },
       { // 可提取金额
         abi,
-        address: '0xa9eC99e4e4566B029e8770d441AF2f2246581751',
+        address: STAKE_ADDRESS,
         functionName: 'getWithdrawableAmount',
         args: [address],
       }
@@ -48,7 +49,7 @@ export default function Withdraw() {
 
   // 监听 StakeChanged 事件，实时更新质押金额
   useWatchContractEvent({
-    address: '0xa9eC99e4e4566B029e8770d441AF2f2246581751',
+    address: STAKE_ADDRESS,
     abi,
     eventName: 'UnStaked',
     onLogs(logs) {
@@ -71,7 +72,7 @@ export default function Withdraw() {
     
     writeContract({
       abi,
-      address: '0xa9eC99e4e4566B029e8770d441AF2f2246581751', // 替换为你的合约地址
+      address: STAKE_ADDRESS, // 替换为你的合约地址
       functionName: 'unStakeETH',
       args: [amount],
     });

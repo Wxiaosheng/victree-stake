@@ -1,29 +1,36 @@
 'use client';
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button, Col, InputNumber, Row, Statistic } from "antd";
 import { formatEther, parseEther } from "viem";
 import { useAccount, useBalance, useReadContract, useWriteContract } from "wagmi";
+import { STAKE_ADDRESS } from "../constant";
 import abi from '../../abi/victreeStake.json';
 
 export default function Stake() {
+  const [loading, setLoading] = useState(false);
   const [stakeAmount, setStakeAmount] = useState<number | undefined>(undefined);
 
   // 当前用户
   const { address } = useAccount();
 
   // 当前用户余额
-  const balance = useBalance({ address });
-  const userBalance = balance.data?.value ? formatEther(balance.data.value) : 0;
+  const { data: balance, refetch: refetchBalance } = useBalance({ address });
+  const userBalance = useMemo(() => {
+    return balance?.value ? formatEther(balance.value, 'gwei') : 0;
+  }, [balance]);
 
   // 当前用户质押金额
-  const userStaked = useReadContract({
+  const { data: totalStake, refetch: refetchTotalStake } = useReadContract({
     abi, // 替换为你的合约 ABI
     functionName: 'getUserTotalStaked',
     args: [address],
-    address: '0xa9eC99e4e4566B029e8770d441AF2f2246581751', // 替换为你的合约地址
+    address: STAKE_ADDRESS, // 替换为你的合约地址
   });
-  const userStakeAmount = userStaked.data ? formatEther(userStaked.data as bigint) : 0;
+
+  const userStakeAmount = useMemo(() => {
+    return totalStake ? formatEther(totalStake as bigint, 'gwei') : 0
+  }, [totalStake]);
 
   // 可改合约实例
   const { writeContract } = useWriteContract();
@@ -41,13 +48,22 @@ export default function Stake() {
       return;
     }
 
+    setLoading(true);
+
     // 调用合约的 stakeETH 方法进行质押
     writeContract({
       abi,
-      address: '0xa9eC99e4e4566B029e8770d441AF2f2246581751', // 替换为你的合约地址
+      address: STAKE_ADDRESS,
       functionName: 'stakeETH',
       args: [],
-      value: parseEther(`${stakeAmount}`),
+      value: parseEther(`${stakeAmount}`, 'gwei'),
+    }, {
+      onSuccess(data, variables, context) {
+        console.log('✅ 质押成功！')
+        refetchBalance();
+        refetchTotalStake();
+        setLoading(false);
+      },
     });
 
   }
@@ -70,7 +86,7 @@ export default function Stake() {
           <Col span="24" style={{ marginBottom: 20, marginTop: 10 }}>
             <InputNumber
               min={0}
-              addonAfter="ETH"
+              addonAfter="Gwei"
               style={{ width: "100%" }} 
               value={stakeAmount}
               onChange={(value) => setStakeAmount(value || 0)}
@@ -80,7 +96,7 @@ export default function Stake() {
         </Row>
 
         <Row justify="center">
-          <Button type="primary" onClick={handleStake}>Stake</Button>
+          <Button loading={loading} type="primary" onClick={handleStake}>Stake</Button>
         </Row>
       </Col>
       <Col span="4"/>

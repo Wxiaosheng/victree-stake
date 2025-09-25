@@ -4,9 +4,6 @@ require("hardhat-deploy");
 
 require("dotenv").config();
 
-
-console.log(process.env.SEPOLIA_RPC_URL)
-
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.28",

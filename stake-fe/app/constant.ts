@@ -1,0 +1,3 @@
+
+/* 质押合约地址 */
+export const STAKE_ADDRESS = "0x22ea18540667AFb841842ad0E0022f9887E02465";
