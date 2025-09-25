@@ -1,7 +1,11 @@
 require("@nomicfoundation/hardhat-toolbox");
-
 require("@openzeppelin/hardhat-upgrades");
 require("hardhat-deploy");
+
+require("dotenv").config();
+
+
+console.log(process.env.SEPOLIA_RPC_URL)
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -11,9 +15,15 @@ module.exports = {
   },
   networks: {
     sepolia: {
-      chainId: "1115511",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      type: "http",
+      chainId: 11155111,
+      url: process.env.SEPOLIA_RPC_URL,
+      accounts: [process.env.SEPOLIA_PRIVATE_KEY],
+    }
+  },
+  etherscan: {
+    apiKey: {
+      sepolia: process.env.ETHERSCAN_API_KEY
     }
   }
 };
