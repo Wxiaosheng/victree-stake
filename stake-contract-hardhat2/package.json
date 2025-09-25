@@ -2,7 +2,7 @@
   "name": "hardhat-project",
   "scripts": {
     "deploy": "hardhat deploy --tags DeployVictreeStakeHardhat2  --network sepolia",
-    "upgrade": "hardhat deploy --tags UpgradeVictreeStakeHardhat2 --reset --network sepolia"
+    "upgrade": "hardhat deploy --tags UpgradeVictreeStakeHardhat2 --network sepolia"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",

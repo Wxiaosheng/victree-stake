@@ -14,6 +14,7 @@ const Header = () => {
     <div className="flex space-x-4 text-blue-500 items-center">
       <span className="cursor-pointer" onClick={() => router.push('/stake')}>stake</span>
       <span className="cursor-pointer" onClick={() => router.push('/withdraw')}>withdraw</span>
+      <span className="cursor-pointer" onClick={() => router.push('/contract')}>contract</span>
     </div>
     <ConnectButton />
   </header>;

@@ -13,7 +13,7 @@ export default function Withdraw() {
   const [withdrawAmount, setWithdrawAmount] = useState<number | null>();
 
   // 当前用户质押金额
-  const { data } = useReadContracts({
+  const { data, refetch } = useReadContracts({
     contracts: [
       { // 质押金额
         abi, // 替换为你的合约 ABI
@@ -41,9 +41,9 @@ export default function Withdraw() {
     const [staked, cooldown, withdraw] = data || [];
 
     return [
-      staked ? formatEther(staked.result as bigint) : 0,
-      cooldown ? formatEther(cooldown.result as bigint) : 0,
-      withdraw ? formatEther(withdraw.result as bigint) : 0,
+      staked ? formatEther(staked.result as bigint, 'gwei') : 0,
+      cooldown ? formatEther(cooldown.result as bigint, 'gwei') : 0,
+      withdraw ? formatEther(withdraw.result as bigint, 'gwei') : 0,
     ];
   }, [data]);
 
@@ -55,7 +55,7 @@ export default function Withdraw() {
     onLogs(logs) {
       console.log('UnStaked event:', logs);
       alert('UnStaked event: ' + JSON.stringify(logs));
-    }
+    },
   })
   
   const { writeContract } = useWriteContract();
@@ -68,13 +68,18 @@ export default function Withdraw() {
       throw new Error("Please connect your wallet first");
     }
 
-    const amount = parseEther(`${unstakeAmount || 0}`);
+    const amount = parseEther(`${unstakeAmount || 0}`, 'gwei');
     
     writeContract({
       abi,
       address: STAKE_ADDRESS, // 替换为你的合约地址
       functionName: 'unStakeETH',
       args: [amount],
+    }, {
+      onSuccess() {
+        // 刷新相关金额
+        refetch();
+      },
     });
   }
   
@@ -98,7 +103,7 @@ export default function Withdraw() {
         <Statistic 
           value={staked} 
           title={<>
-            <p className="text-blue-500 text-2xl">质押金额(ETH)</p>
+            <p className="text-blue-500 text-2xl">质押金额(Gwei)</p>
             <p className="text-sm text-gray-500 mt-1">质押金额是指您当前质押在合约中的总金额。</p>
           </>} 
         />
@@ -107,7 +112,7 @@ export default function Withdraw() {
         <Statistic
           value={cooldown} 
           title={<>
-            <p className="text-blue-500 text-2xl font-weight-bold">锁定金额(ETH)</p>
+            <p className="text-blue-500 text-2xl font-weight-bold">锁定金额(Gwei)</p>
             <p className="text-sm text-gray-500 mt-1">锁定金额是指您解除质押后存在 20 min 的冷静期，冷静期内您无法提取该金额。</p>
           </>} 
         />
@@ -116,7 +121,7 @@ export default function Withdraw() {
         <Statistic 
           value={withdraw} 
           title={<>
-            <p className="text-blue-500 text-2xl font-weight-bold">可提取金额(ETH)</p>
+            <p className="text-blue-500 text-2xl font-weight-bold">可提取金额(Gwei)</p>
             <p className="text-sm text-gray-500 mt-1">可提取金额是指解除质押后，超过冷静期的，可以立即提取的金额。</p>
           </>} 
         />

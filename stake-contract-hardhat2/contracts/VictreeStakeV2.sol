@@ -5,8 +5,12 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-/** @title VictreeStake
- *  @dev A contract for staking and managing user stakes
+/** @title VictreeStake V2
+ *  新增功能，获取用户的质押列表与解除质押列表
+ *  合约是不能直接返回数组，因为存储的结构不是连续，或者返回一个定长的数组，会导致 Gas 费用过高
+ *  方案：
+ *    1、提供获取数组长度的方法
+ *    2、循环获取指定位置的数据
  */
 contract VictreeStakeV2 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
   
@@ -45,7 +49,10 @@ contract VictreeStakeV2 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
   // 取消质押事件
   event UnStaked(address indexed user, uint256 amount, uint256 timestamp);
 
-  function initialize() public {
+  function initialize() public initializer {
+    __Ownable_init(msg.sender);
+    __UUPSUpgradeable_init();
+    
     // 初始化 ETH 质押参数
     ethStake = ETHStake({
       totalStaked: 0,
@@ -208,7 +215,20 @@ contract VictreeStakeV2 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     emit UnStaked(msg.sender, amount, block.timestamp);
   }
 
-  function testV2() public pure returns (string memory) {
-    return "test V2";
+  // 获取用户的质押列表的长度
+  function getUserStakesLeng() external view returns (uint256) {
+    return stakes[msg.sender].length;
   }
+  function getUserStakesLeng(address user) external view returns (uint256) {
+    return stakes[user].length;
+  }
+
+  // 获取用户的解除质押列表的长度
+    function getUserUnstakesLeng() external view returns (uint256) {
+    return unStakes[msg.sender].length;
+  }
+  function getUserUnstakesLeng(address user) external view returns (uint256) {
+    return unStakes[user].length;
+  }
+
 }

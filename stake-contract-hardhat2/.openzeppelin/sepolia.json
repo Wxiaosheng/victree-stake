@@ -465,24 +465,24 @@
             "offset": 0,
             "slot": "0",
             "type": "t_struct(ETHStake)1448_storage",
-            "contract": "VictreeStake",
-            "src": "contracts/VictreeStake.sol:20"
+            "contract": "VictreeStakeV2",
+            "src": "contracts/VictreeStakeV2.sol:34"
           },
           {
             "label": "stakes",
             "offset": 0,
             "slot": "2",
             "type": "t_mapping(t_address,t_array(t_struct(StakeData)1458_storage)dyn_storage)",
-            "contract": "VictreeStake",
-            "src": "contracts/VictreeStake.sol:32"
+            "contract": "VictreeStakeV2",
+            "src": "contracts/VictreeStakeV2.sol:46"
           },
           {
             "label": "unStakes",
             "offset": 0,
             "slot": "3",
             "type": "t_mapping(t_address,t_array(t_struct(UnStakeData)1471_storage)dyn_storage)",
-            "contract": "VictreeStake",
-            "src": "contracts/VictreeStake.sol:43"
+            "contract": "VictreeStakeV2",
+            "src": "contracts/VictreeStakeV2.sol:54"
           }
         ],
         "types": {
@@ -529,23 +529,23 @@
             "numberOfBytes": "8"
           },
           "t_array(t_struct(StakeData)1458_storage)dyn_storage": {
-            "label": "struct VictreeStake.StakeData[]",
+            "label": "struct VictreeStakeV2.StakeData[]",
             "numberOfBytes": "32"
           },
           "t_array(t_struct(UnStakeData)1471_storage)dyn_storage": {
-            "label": "struct VictreeStake.UnStakeData[]",
+            "label": "struct VictreeStakeV2.UnStakeData[]",
             "numberOfBytes": "32"
           },
           "t_mapping(t_address,t_array(t_struct(StakeData)1458_storage)dyn_storage)": {
-            "label": "mapping(address => struct VictreeStake.StakeData[])",
+            "label": "mapping(address => struct VictreeStakeV2.StakeData[])",
             "numberOfBytes": "32"
           },
           "t_mapping(t_address,t_array(t_struct(UnStakeData)1471_storage)dyn_storage)": {
-            "label": "mapping(address => struct VictreeStake.UnStakeData[])",
+            "label": "mapping(address => struct VictreeStakeV2.UnStakeData[])",
             "numberOfBytes": "32"
           },
           "t_struct(ETHStake)1448_storage": {
-            "label": "struct VictreeStake.ETHStake",
+            "label": "struct VictreeStakeV2.ETHStake",
             "members": [
               {
                 "label": "totalStaked",
@@ -563,7 +563,7 @@
             "numberOfBytes": "64"
           },
           "t_struct(StakeData)1458_storage": {
-            "label": "struct VictreeStake.StakeData",
+            "label": "struct VictreeStakeV2.StakeData",
             "members": [
               {
                 "label": "amount",
@@ -587,7 +587,393 @@
             "numberOfBytes": "96"
           },
           "t_struct(UnStakeData)1471_storage": {
-            "label": "struct VictreeStake.UnStakeData",
+            "label": "struct VictreeStakeV2.UnStakeData",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "unStakeTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "isWithdrawn",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "f467fe8dce2d5340b757b280351dab6700adb7ae51cb22a82b1e6445c93877ec": {
+      "address": "0x6c13614EF0E043E67617057b230Cb0c8D14d0F03",
+      "txHash": "0xf75db8410b071b98c2b65a976d949dfb1c2b3d0afe6b3dd7d556baa91ff93b02",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "ethStake",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(ETHStake)1448_storage",
+            "contract": "VictreeStakeV2",
+            "src": "contracts/VictreeStakeV2.sol:34"
+          },
+          {
+            "label": "stakes",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_array(t_struct(StakeData)1458_storage)dyn_storage)",
+            "contract": "VictreeStakeV2",
+            "src": "contracts/VictreeStakeV2.sol:46"
+          },
+          {
+            "label": "unStakes",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_array(t_struct(UnStakeData)1471_storage)dyn_storage)",
+            "contract": "VictreeStakeV2",
+            "src": "contracts/VictreeStakeV2.sol:54"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_array(t_struct(StakeData)1458_storage)dyn_storage": {
+            "label": "struct VictreeStakeV2.StakeData[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnStakeData)1471_storage)dyn_storage": {
+            "label": "struct VictreeStakeV2.UnStakeData[]",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_struct(StakeData)1458_storage)dyn_storage)": {
+            "label": "mapping(address => struct VictreeStakeV2.StakeData[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_struct(UnStakeData)1471_storage)dyn_storage)": {
+            "label": "mapping(address => struct VictreeStakeV2.UnStakeData[])",
+            "numberOfBytes": "32"
+          },
+          "t_struct(ETHStake)1448_storage": {
+            "label": "struct VictreeStakeV2.ETHStake",
+            "members": [
+              {
+                "label": "totalStaked",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "cooldown",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(StakeData)1458_storage": {
+            "label": "struct VictreeStakeV2.StakeData",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "startTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "isUnStaked",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(UnStakeData)1471_storage": {
+            "label": "struct VictreeStakeV2.UnStakeData",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "unStakeTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "isWithdrawn",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "15fab6c722934eb3c015008806e3dd5195a35fe01d9af7460d8ddc9ad8ed7ce8": {
+      "address": "0x3796Edc3f7a37e8b39Bb82Fd1884c815548F06e2",
+      "txHash": "0x60077b3a9da0b7c961bbe9900206f8d5c27c3fd79e8ec6d77d5e350267696d3d",
+      "layout": {
+        "solcVersion": "0.8.28",
+        "storage": [
+          {
+            "label": "ethStake",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(ETHStake)1448_storage",
+            "contract": "VictreeStakeV2",
+            "src": "contracts/VictreeStakeV2.sol:34"
+          },
+          {
+            "label": "stakes",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_array(t_struct(StakeData)1458_storage)dyn_storage)",
+            "contract": "VictreeStakeV2",
+            "src": "contracts/VictreeStakeV2.sol:46"
+          },
+          {
+            "label": "unStakes",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_array(t_struct(UnStakeData)1471_storage)dyn_storage)",
+            "contract": "VictreeStakeV2",
+            "src": "contracts/VictreeStakeV2.sol:54"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_array(t_struct(StakeData)1458_storage)dyn_storage": {
+            "label": "struct VictreeStakeV2.StakeData[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(UnStakeData)1471_storage)dyn_storage": {
+            "label": "struct VictreeStakeV2.UnStakeData[]",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_struct(StakeData)1458_storage)dyn_storage)": {
+            "label": "mapping(address => struct VictreeStakeV2.StakeData[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_struct(UnStakeData)1471_storage)dyn_storage)": {
+            "label": "mapping(address => struct VictreeStakeV2.UnStakeData[])",
+            "numberOfBytes": "32"
+          },
+          "t_struct(ETHStake)1448_storage": {
+            "label": "struct VictreeStakeV2.ETHStake",
+            "members": [
+              {
+                "label": "totalStaked",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "cooldown",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(StakeData)1458_storage": {
+            "label": "struct VictreeStakeV2.StakeData",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "startTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "isUnStaked",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(UnStakeData)1471_storage": {
+            "label": "struct VictreeStakeV2.UnStakeData",
             "members": [
               {
                 "label": "amount",

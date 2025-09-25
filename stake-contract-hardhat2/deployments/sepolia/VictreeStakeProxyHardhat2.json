@@ -20,7 +20,11 @@
     "function ethStake() view returns (uint256,uint256)",
     "function getCooldownAmount(address) view returns (uint256)",
     "function getTotalStaked() view returns (uint256)",
+    "function getUserStakesLeng() view returns (uint256)",
+    "function getUserStakesLeng(address) view returns (uint256)",
     "function getUserTotalStaked(address) view returns (uint256)",
+    "function getUserUnstakesLeng() view returns (uint256)",
+    "function getUserUnstakesLeng(address) view returns (uint256)",
     "function getWithdrawableAmount(address) view returns (uint256)",
     "function initialize()",
     "function owner() view returns (address)",
@@ -34,5 +38,5 @@
     "function upgradeToAndCall(address,bytes) payable",
     "function withdrawUnStakedETH(uint256)"
   ],
-  "numDeployments": 4
+  "numDeployments": 8
 }
