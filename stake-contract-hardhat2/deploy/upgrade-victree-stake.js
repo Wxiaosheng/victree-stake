@@ -45,6 +45,17 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   }, null, 2));
 
   console.log("部署信息已保存，请查看 " + storePath);
+
+  console.log("♻️开始验证合约...");
+  try {
+    await run("verify:verify", {
+      address: proxyAddress,
+      constructorArguments: []
+    });
+    console.log("✅ 合约验证成功！");
+  } catch (error) {
+    console.error("❌ 合约验证失败：", error);
+  }
 }
 
 module.exports.tags = ["UpgradeVictreeStakeHardhat2"]

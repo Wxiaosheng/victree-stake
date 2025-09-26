@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { ethers, upgrades } = require('hardhat');
+const { ethers, upgrades, run } = require('hardhat');
 
 module.exports = async ({ getNamedAccounts, deployments, network }) => {
   console.log("VictreeStake 合约开始部署......");
@@ -18,17 +18,11 @@ module.exports = async ({ getNamedAccounts, deployments, network }) => {
   const VictreeStake = await ethers.getContractFactory("VictreeStake");
 
   console.log("开始部署合约。。。");
-  // try {
-    const proxy = await upgrades.deployProxy(VictreeStake, [], {
-      kind: 'uups',
-      initializer: "initialize"
-    });
-  // } catch (error) {
-  //   console.log(error.code)
-  //   console.log(error.data)
-  //   console.log(error.reason)
-  //   return 
-  // }
+
+  const proxy = await upgrades.deployProxy(VictreeStake, [], {
+    kind: 'uups',
+    initializer: "initialize"
+  });
   
   console.log("等待部署合约。。。");
   await proxy.waitForDeployment();
@@ -66,6 +60,17 @@ module.exports = async ({ getNamedAccounts, deployments, network }) => {
   }, null, 2));
 
   console.log("部署信息已保存，请查看 " + storePath);
+
+  console.log("♻️开始验证合约...");
+  try {
+    await run("verify:verify", {
+      address: proxyAddress,
+      constructorArguments: []
+    });
+    console.log("✅ 合约验证成功！");
+  } catch (error) {
+    console.error("❌ 合约验证失败：", error);
+  }
 }
 
 module.exports.tags = ["DeployVictreeStakeHardhat2"];
