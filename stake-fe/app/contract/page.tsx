@@ -1,11 +1,18 @@
 'use client';
 
+import { useMemo } from "react";
+import { Card, Col, Row, Table } from "antd";
+import { formatEther } from "viem";
 import { useAccount, useReadContracts } from "wagmi";
 import { STAKE_ADDRESS } from "../constant";
 import abi from '../../abi/victreeStake.json';
-import { useMemo } from "react";
-import { Card, Table } from "antd";
-import { formatEther } from "viem";
+import { formatDate } from "../utils";
+
+// 列表时间统一处理
+const renderTime = (v: unknown, record: unknown) => {
+  const time = Number(record?.result?.[1]) * 1000;
+  return formatDate(time);
+}
 
 /** 合约相关信息展示 */
 const Contract = () => {
@@ -24,6 +31,12 @@ const Contract = () => {
         address: STAKE_ADDRESS,
         functionName: 'getUserUnstakesLeng',
         args: [address],
+      },
+      {
+        abi,
+        address: STAKE_ADDRESS,
+        functionName: 'ethStake',
+        args: [],
       }
     ],
   });
@@ -32,6 +45,18 @@ const Contract = () => {
   const getListDisable = useMemo(() => {
     return data?.[0]?.status !== "success";
   }, [data]);
+
+    // ETH 质押总质押量
+  const totalStaked = useMemo(() => {
+    const ethStake = data?.[2];
+    return ethStake?.result?.[0] || 0;
+  }, [data?.[2]]);
+
+  // ETH 质押冷静期
+  const cooldown = useMemo(() => {
+    const ethStake = data?.[2];
+    return Number(ethStake?.result?.[1]) || 0;
+  }, [data?.[2]]);
 
   // 质押列表
   const getStakesParams = useMemo(() => {
@@ -63,43 +88,62 @@ const Contract = () => {
     disable: !getListDisable
   });
 
-  return <div>
-    <Card title="质押列表" variant="borderless">
-      <Table
-        columns={[
-          { 
-            title: '质押金额',  
-            dataIndex: 'amount', 
-            render: (v, record) => {
-              const result: any = record?.result || [];
-              return formatEther(result[0], 'gwei')
-            }
-          },
-          {  title: '质押时间', dataIndex: 'time', render: (v, record) => (record?.result as any)[1] },
-          {  title: '是否已解除质押', dataIndex: 'flag', render: (v, record) => (record?.result as any)[2] ? '已解除质押' : '质押中' },
-        ]}
-        dataSource={stakes}
-      />
-    </Card>
-    
-    <Card title="解除质押列表" variant="borderless">
-      <Table
-        columns={[
-          { 
-            title: '解除质押金额',  
-            dataIndex: 'amount', 
-            render: (v, record) => {
-              const result: any = record?.result || [];
-              return formatEther(result[0], 'gwei')
-            }
-          },
-          {  title: '解除质押时间', dataIndex: 'time', render: (v, record) => (record?.result as any)[1] },
-          {  title: '是否可提取', dataIndex: 'flag', render: (v, record) => (record?.result as any)[2] ? '可提取' : '冷冻中' },
-        ]}
-        dataSource={unStakes}
-      />
-    </Card>
-  </div>
+  console.log(data, stakes, unStakes, cooldown)
+
+  return <>
+    <Row>
+      <Col span="12">ETH 总质押量：{formatEther(totalStaked, 'gwei')} （Gwei）</Col>
+      <Col span="12">ETH 冷静期：{Number(cooldown) / 60}（分）</Col>
+    </Row>
+    <Row>
+      <Col key="stakes" span="12">
+        <Card title="质押列表" variant="borderless">
+          <Table
+            columns={[
+              { 
+                title: '质押金额',  
+                dataIndex: 'amount', 
+                render: (v, record) => {
+                  const result: any = record?.result || [];
+                  return formatEther(result[0], 'gwei')
+                }
+              },
+              {  title: '质押时间', dataIndex: 'time', render: renderTime },
+              {  title: '是否已解除质押', dataIndex: 'flag', render: (v, record) => (record?.result as any)[2] ? '已解除质押' : '质押中' },
+            ]}
+            dataSource={stakes}
+          />
+        </Card>
+      </Col>
+      <Col key="unstakes" span="12">
+        <Card title="解除质押列表" variant="borderless">
+          <Table
+            columns={[
+              { 
+                title: '解除质押金额',  
+                dataIndex: 'amount', 
+                render: (v, record) => {
+                  const result: any = record?.result || [];
+                  return formatEther(result[0], 'gwei')
+                }
+              },
+              {  title: '解除质押时间', dataIndex: 'time', render: renderTime },
+              {  title: '是否可提取', dataIndex: 'flag', render: (v, record) => {
+                console.log({
+                  current: (new Date()).getTime() / 1000,
+                  target: Number((record?.result as any)[1])
+                })
+                const isCool = (new Date()).getTime() / 1000 - Number((record?.result as any)[1]) < cooldown;
+
+                return isCool ? '冷冻中' : '可提取'
+              } },
+            ]}
+            dataSource={unStakes}
+          />
+        </Card>
+      </Col>
+    </Row>
+  </>
 }
 
 export default Contract;
