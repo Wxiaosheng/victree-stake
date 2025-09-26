@@ -91,9 +91,10 @@ const Contract = () => {
   console.log(data, stakes, unStakes, cooldown)
 
   return <>
-    <Row>
-      <Col span="12">ETH 总质押量：{formatEther(totalStaked, 'gwei')} （Gwei）</Col>
-      <Col span="12">ETH 冷静期：{Number(cooldown) / 60}（分）</Col>
+    <Row style={{ marginTop: 16, marginBottom: 16 }}>
+      <Col span="4" />
+      <Col span="8" style={{ fontSize: 24, fontWeight: 600 }}>ETH 总质押量：{formatEther(totalStaked, 'gwei')} （Gwei）</Col>
+      <Col span="12" style={{ fontSize: 24, fontWeight: 600 }}>ETH 冷静期：{Number(cooldown) / 60}（分）</Col>
     </Row>
     <Row>
       <Col key="stakes" span="12">
@@ -129,13 +130,9 @@ const Contract = () => {
               },
               {  title: '解除质押时间', dataIndex: 'time', render: renderTime },
               {  title: '是否可提取', dataIndex: 'flag', render: (v, record) => {
-                console.log({
-                  current: (new Date()).getTime() / 1000,
-                  target: Number((record?.result as any)[1])
-                })
                 const isCool = (new Date()).getTime() / 1000 - Number((record?.result as any)[1]) < cooldown;
 
-                return isCool ? '冷冻中' : '可提取'
+                return isCool ? '冷冻中' : (record?.result as any)[2] ? '已提取' : '可提取'
               } },
             ]}
             dataSource={unStakes}

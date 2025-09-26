@@ -93,8 +93,17 @@ export default function Withdraw() {
       throw new Error("Please connect your wallet first");
     }
 
-    const amount = parseEther(`${withdrawAmount || 0}`);
-    console.log("Withdraw clicked", amount);
+    const amount = parseEther(`${withdrawAmount || 0}`, 'gwei');
+    writeContract({
+      abi,
+      address: STAKE_ADDRESS, // 替换为你的合约地址
+      functionName: 'withdrawUnStakedETH',
+      args: [amount],
+    }, {
+      onSuccess: () => {
+        console.log("解除质押成功")
+      }
+    });
   }
 
   return (<>
@@ -133,7 +142,7 @@ export default function Withdraw() {
       <Col span={12}>
         <InputNumber
           min={0}
-          addonAfter="ETH"
+          addonAfter="Gwei"
           style={{ width: "50%" }} 
           value={unstakeAmount}
           onChange={(value) => setUnstakeAmount(value)}
@@ -149,7 +158,7 @@ export default function Withdraw() {
       <Col span={12}>
         <InputNumber
           min={0}
-          addonAfter="ETH"
+          addonAfter="Gwei"
           style={{ width: "50%" }} 
           value={withdrawAmount}
           onChange={(value) => setWithdrawAmount(value)}
