@@ -55,3 +55,16 @@ After setting the variable, you can run the deployment with the Sepolia network:
 ```shell
 npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
 ```
+
+
+* hardhat2
+  * 部署使用 hardhat deploy 部署，还是直接使用 scripts(ethers) 脚本部署？
+  * 合约新增变量在最后面加，那么如果 struct 要加字段怎么办？ 能加吗？
+
+* hardhat3
+  * 如何在 .t.sol 中测试事件已发送？
+  * 如何配置交易的 msg.sender? hardhat config 能配置吗？
+  * 使用 vm.prank(user)，每次词调用前都要设置一次吗？
+  * .t.sol 测试中，如何传递之前 test function 的影响？
+
+

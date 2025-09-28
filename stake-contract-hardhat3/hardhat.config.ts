@@ -37,6 +37,11 @@ const config: HardhatUserConfig = {
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
   },
+  test: {
+    solidity: {
+      from: '0xD1E6059628422DB5093f9862C1a007a71748Cb40'
+    }
+  }
 };
 
 export default config;
